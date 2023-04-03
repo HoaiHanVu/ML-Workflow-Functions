@@ -304,12 +304,26 @@ def crossval_linear_regression(model, X, y, cv):
 def eval_clf_testset(model, X, y):
     from sklearn.metrics import accuracy_score, roc_auc_score, roc_curve
     from sklearn.metrics import confusion_matrix, classification_report
-    yhat_test = model.predict(X)
-    print('----- CLASSIFICATION MODEL PREFOMANCE EVALUATION -----')
-    print('* R-squared model of Test: {}'.format(round(accuracy_score(y, yhat_test), 4)))
+    yhat = model.predict(X)
+    print('----- EVALUATION MODEL PERFORMANCE ON TESTING SET -----')
+    print('* Testing Accuracy score: {}'.format(round(accuracy_score(y, yhat), 4)))
     print()
-    print('* Confusion Matrix of Test: ')
-    print(confusion_matrix(y, yhat_test))
+    print('* Confusion Matrix: ')
+    print(confusion_matrix(y, yhat))
     print()
-    print('* Classification Report of Test: ')
-    print(classification_report(y, yhat_test))
+    print('* Classification Report: ')
+    print(classification_report(y, yhat))
+
+# Hàm đánh giá hiệu suất model phân loại trên tập validation
+def eval_clf_valset(model, X, y):
+    from sklearn.metrics import accuracy_score, roc_auc_score, roc_curve
+    from sklearn.metrics import confusion_matrix, classification_report
+    yhat = model.predict(X)
+    print('----- EVALUATION MODEL PERFORMANCE ON VALIDATION SET -----')
+    print('* Validation Accuracy score: {}'.format(round(accuracy_score(y, yhat), 4)))
+    print()
+    print('* Confusion Matrix: ')
+    print(confusion_matrix(y, yhat))
+    print()
+    print('* Classification Report: ')
+    print(classification_report(y, yhat))
