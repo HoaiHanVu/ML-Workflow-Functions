@@ -8,6 +8,7 @@ import seaborn as sb
 sb.set_theme()
 import scipy.stats as st
 from underthesea import word_tokenize, pos_tag, sent_tokenize
+from sklearn.model_selection import train_test_split, cross_val_score
 from pyvi import ViPosTagger, ViTokenizer
 
 
@@ -327,3 +328,14 @@ def eval_clf_valset(model, X, y):
     print()
     print('* Classification Report: ')
     print(classification_report(y, yhat))
+
+
+# Spliting dataset into training, validating and testing
+def train_val_test_split(X, y, val_size, test_size, random_st):
+    """ Function that split dataset into 3 parts: training, validating and testing"""
+    
+    X_temp, X_test, y_temp, y_test = train_test_split(X, y, test_size = test_size, 
+                                                      random_state = random_st)
+    X_train, X_val, y_train, y_val = train_test_split(X_temp, y_temp, test_size = val_size, 
+                                                      random_state = random_st)
+    return X_train, X_val, X_test, y_train, y_val, y_test
