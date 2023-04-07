@@ -339,3 +339,34 @@ def train_val_test_split(X, y, val_size, test_size, random_st):
     X_train, X_val, y_train, y_val = train_test_split(X_temp, y_temp, test_size = val_size, 
                                                       random_state = random_st)
     return X_train, X_val, X_test, y_train, y_val, y_test
+
+
+
+# Weighting sample for imbalanced dataset of binary classify problems
+def BinarySampleWeights(total_samples, labels, method = None, beta = None):
+    
+    """
+    This function calculate sample weights for binary classification using imbalanced dataset.
+    Args:
+        method: str: zen, ins, isns, ens
+            None: default, w(c) = total_samples / number of samples of class c
+            zen: The “balanced” heuristic is inspired by Logistic Regression in Rare Events Data, King, Zen, 2001.
+            ins: Inverse Number of Samples, w(c) = 1 / number of sample in class c
+            isns: Inverse of Square Root of Number of Samples, w(c) = 1 / sqrt(number of sample in class c)
+            ens: Effective Number of Samples, was introduced in the CVPR’19 paper by Google: Class-Balanced Loss Based on Effective Number of Samples.
+        beta: int; in [0, 1], suggest experiment with, 0.9, 0.99, 0.999, 0.9999
+    """
+    import numpy as np
+    if method == None:
+        sample_weight = np.round(total_samples / np.bincount(labels), 3)
+    elif method == 'zen':
+        sample_weight = np.round(total_samples / (2 * np.bincount(labels)), 3)
+    elif method == 'ins':
+        sample_weight = np.round(1 / np.bincount(labels), 4)
+    elif method == 'isns':
+        sample_weight = np.round(1 / np.bincount(labels) ** 0.5, 4)
+    elif method == 'ens':
+        eff_num = 1.0 - np.power(beta, np.bincount(labels))
+        weights = (1.0 - beta) / eff_num
+        sample_weight = weights / np.sum(weights) * 2
+    return sample_weight  
