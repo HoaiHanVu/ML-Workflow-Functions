@@ -332,6 +332,7 @@ def eval_clf_valset(model, X, y):
 
 # Spliting dataset into training, validating and testing
 def train_val_test_split(X, y, val_size, test_size, random_st):
+    from sklearn.model_selection import train_test_split
     """ Function that split dataset into 3 parts: training, validating and testing"""
     
     X_temp, X_test, y_temp, y_test = train_test_split(X, y, test_size = test_size, 
