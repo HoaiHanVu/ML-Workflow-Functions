@@ -8,6 +8,7 @@ import seaborn as sb
 sb.set_theme()
 import scipy.stats as st
 from underthesea import word_tokenize, pos_tag, sent_tokenize
+from sklearn.metrics import roc_curve, roc_auc_score
 from sklearn.model_selection import train_test_split, cross_val_score
 from pyvi import ViPosTagger, ViTokenizer
 
@@ -224,19 +225,37 @@ def plot_precision_recall_curve(model, X, y, cv):
     plt.title('Precision & Recall by threshold', color = 'red', fontsize = 18)
     plt.show()
     
-def ROC_curve_display(model, X, y, pred):
-    from sklearn.metrics import accuracy_score, roc_auc_score, roc_curve
-    yhat_proba = model.predict_proba(X)
-    print('* Area below the curve: {}'.format(round(roc_auc_score(y, yhat_proba[:, pred]), 5)))
-    print()
-    fpr, tpr, thresholds = roc_curve(y, yhat_proba[:, pred])
+# def ROC_curve_display(model, X, y, pred):
+#     from sklearn.metrics import accuracy_score, roc_auc_score, roc_curve
+#     yhat_proba = model.predict_proba(X)
+#     print('* Area below the curve: {}'.format(round(roc_auc_score(y, yhat_proba[:, pred]), 5)))
+#     print()
+#     fpr, tpr, thresholds = roc_curve(y, yhat_proba[:, pred])
+#     plt.figure(figsize=(10, 6))
+#     plt.plot([0, 1], [0, 1], 'r--')
+#     plt.plot(fpr, tpr, marker = '.')
+#     plt.xlabel('False Possitve Rate', fontsize = 15)
+#     plt.ylabel('True Possitive Rate', fontsize = 15)
+#     plt.title('ROC Curve of Predict class {}'.format(pred), fontsize = 18)
+#     plt.grid(True)
+#     plt.show()
+
+def plot_roc_curve(y_true, y_pred_prob):
+    # Calculate ROC AUC score
+    roc_auc = roc_auc_score(y_true, y_pred_prob)
+    print('ROC AUC score: {:.4f}'.format(roc_auc))
+
+    # Calculate ROC curve
+    fpr, tpr, thresholds = roc_curve(y_true, y_pred_prob)
+
+    # Plot ROC curve
     plt.figure(figsize=(10, 6))
-    plt.plot([0, 1], [0, 1], 'r--')
-    plt.plot(fpr, tpr, marker = '.')
-    plt.xlabel('False Possitve Rate', fontsize = 15)
-    plt.ylabel('True Possitive Rate', fontsize = 15)
-    plt.title('ROC Curve of Predict class {}'.format(pred), fontsize = 18)
-    plt.grid(True)
+    plt.plot(fpr, tpr, color='blue', lw=2, label='ROC curve')
+    plt.plot([0, 1], [0, 1], color='grey', lw=2, linestyle='--')
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title('Receiver Operating Characteristic (ROC) Curve')
+    plt.legend(loc='lower right')
     plt.show()
     
 # Hàm vẽ biểu đồ heatmap
