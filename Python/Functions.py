@@ -210,19 +210,26 @@ def cat_cont(frame, col, output_var, ax = (10, 6)):
 
 
 
-# Hàm vẽ đường ong precision & recall theo threshold    
-def plot_precision_recall_curve(model, X, y, cv):
-    from sklearn.model_selection import cross_val_predict
-    from sklearn.metrics import precision_recall_curve
-    y_scores = cross_val_predict(model, X, y, cv=cv, method = 'decision_function')
-    precisions, recalls, thresholds = precision_recall_curve(y, y_scores)
+# Hàm vẽ đường ong precision & recall   
+def plot_precision_recall_curve(model, X, y):
+    from sklearn.metrics import precision_recall_curve, auc
+    # Get predicted probabilities for positive class
+    y_pred = model.predict(X)
+    
+    # Calculate precision, recall, and threshold values
+    precision, recall, thresholds = precision_recall_curve(y, y_pred)
+    
+    # Calculate area under the curve (AUC)
+    auc_score = auc(recall, precision)
+    
+    # Plot precision-recall curve
     plt.figure(figsize=(10, 6))
-    plt.plot(thresholds, precisions[:-1], 'g--', label = 'Precision')
-    plt.plot(thresholds, recalls[:-1], 'b--', label = 'Recall')
-    plt.legend(fontsize = 15)
+    plt.plot(recall, precision, color='b', label='Precision-Recall curve (AUC = %0.2f)' % auc_score)
+    plt.xlabel('Recall')
+    plt.ylabel('Precision')
+    plt.title('Precision-Recall Curve')
+    plt.legend(loc='lower left')
     plt.grid(True)
-    plt.xlabel('Thresholds', fontsize = 15)
-    plt.title('Precision & Recall by threshold', color = 'red', fontsize = 18)
     plt.show()
     
 # def ROC_curve_display(model, X, y, pred):
