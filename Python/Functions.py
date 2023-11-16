@@ -8,8 +8,8 @@ import seaborn as sb
 sb.set_theme()
 import scipy.stats as st
 from underthesea import word_tokenize, pos_tag, sent_tokenize
-from sklearn.metrics import roc_curve, roc_auc_score
-from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.metrics import roc_curve, roc_auc_score, auc
+from sklearn.model_selection import train_test_split, cross_val_score, cross_val_predict, cross_validate
 from pyvi import ViPosTagger, ViTokenizer
 
 
@@ -354,6 +354,26 @@ def eval_clf_valset(model, X, y):
     print()
     print('* Classification Report: ')
     print(classification_report(y, yhat))
+
+# Measure ROC metrics through KFold and cross validation
+def plot_roc_curve_validation(model, inputs, output, cv=10):
+    y_proba = cross_val_predict(model, inputs, output, cv=cv, method='predict_proba')
+    y_proba = y_proba[:, 1]
+    
+    y_scores = cross_val_score(model, inputs, output, cv=cv, scoring='roc_auc')
+    mean_scores = y_scores.mean()
+    
+    fpr, tpr, thresholds = roc_curve(output, y_proba)
+    roc_auc = auc(fpr, tpr)
+    
+    plt.figure(figsize=(8, 6))
+    plt.plot(fpr, tpr, color='darkorange', lw=2, label='ROC curve (Mean AUC = {:.4f})'.format(mean_scores))
+    plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title('Receiver Operating Characteristic (ROC) Curve')
+    plt.legend(loc='lower right')
+    plt.show()
 
 
 # Spliting dataset into training, validating and testing
